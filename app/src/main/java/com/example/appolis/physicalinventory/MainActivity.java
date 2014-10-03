@@ -42,7 +42,7 @@ import org.ksoap2.transport.HttpTransportSE;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
-    public static MyPageAdapter pageAdapter;
+    public static MyPageAdapter pageAdapter;//
     public static ViewPager pager;
     public static TextView tvItemDesc;
     public static EditText etItem,etLot, etQty;
