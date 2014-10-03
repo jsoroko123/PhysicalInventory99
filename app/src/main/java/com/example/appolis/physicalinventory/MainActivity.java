@@ -323,7 +323,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         } else {
             Toast toast = Toast.makeText(getApplicationContext(),
                     "No scan data received!", Toast.LENGTH_SHORT);
-            toast.show();
+            toast.show();//
         }
 
     }
