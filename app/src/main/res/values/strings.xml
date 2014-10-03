@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Physical Inventory</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Barcode Scanner</string>
+    <string name="item_label">Scan or Enter Item Number</string>
+    <string name="lot_label"></string>
+    <string name="item_lot_label">Item Count History</string>
+    <string name="item_detail_label">Item Details</string>
+
+
+</resources>

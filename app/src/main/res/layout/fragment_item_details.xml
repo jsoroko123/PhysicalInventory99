@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+    <TextView
+        android:id="@+id/section_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/item_detail_label"
+        android:layout_gravity="center_horizontal"
+        android:textSize="22sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="15dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#808080"
+        android:layout_below="@id/section_label"
+        android:id="@+id/vw1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Item Desc:"
+        android:id="@+id/tvItemDesc"
+        android:layout_below="@+id/section_label"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvItemDesc2"
+        android:layout_below="@+id/section_label"
+        android:layout_toRightOf="@+id/tvItemDesc"
+        android:padding="15dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#808080"
+        android:layout_below="@id/tvItemDesc"
+        android:id="@+id/vw2"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Standard Cost:"
+        android:id="@+id/tvStndCost"
+        android:layout_below="@+id/tvItemDesc"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvStndCost2"
+        android:layout_below="@+id/tvItemDesc"
+        android:layout_toRightOf="@+id/tvStndCost"
+        android:padding="15dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#808080"
+        android:layout_below="@id/tvStndCost"
+        android:id="@+id/vw3"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Current Cost:"
+        android:id="@+id/tvCurrCost"
+        android:layout_below="@+id/tvStndCost"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvCurrCost2"
+        android:layout_below="@+id/tvStndCost"
+        android:layout_toRightOf="@+id/tvCurrCost"
+        android:padding="15dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#808080"
+        android:layout_below="@id/tvCurrCost"
+        android:id="@+id/vw4"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Item Ship Weight:"
+        android:id="@+id/tvShip"
+        android:layout_below="@+id/tvCurrCost"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvShip2"
+        android:layout_below="@+id/tvCurrCost"
+        android:layout_toRightOf="@+id/tvShip"
+        android:padding="15dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#808080"
+        android:layout_below="@id/tvShip"
+        android:id="@+id/vw5"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Purchasing U Of M:"
+        android:id="@+id/tvPuom"
+        android:layout_below="@+id/tvShip"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvPuom2"
+        android:layout_below="@+id/tvShip"
+        android:layout_toRightOf="@+id/tvPuom"
+        android:padding="15dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#808080"
+        android:layout_below="@id/tvPuom"
+        android:id="@+id/vw6"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Selling U Of M:"
+        android:id="@+id/tvSuom"
+        android:layout_below="@+id/tvPuom"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvSuom2"
+        android:layout_below="@+id/tvPuom"
+        android:layout_toRightOf="@+id/tvSuom"
+        android:padding="15dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#808080"
+        android:layout_below="@id/tvSuom"
+        android:id="@+id/vw7"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="U Of M Schedule:"
+        android:id="@+id/tvuom"
+        android:layout_below="@+id/tvSuom"
+        android:padding="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tvuom2"
+        android:layout_below="@+id/tvSuom"
+        android:layout_toRightOf="@+id/tvuom"
+        android:padding="15dp"/>
+</RelativeLayout>
