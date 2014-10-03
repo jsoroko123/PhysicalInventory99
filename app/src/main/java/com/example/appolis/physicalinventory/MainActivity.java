@@ -68,7 +68,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     MainFragment mf = new MainFragment();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
