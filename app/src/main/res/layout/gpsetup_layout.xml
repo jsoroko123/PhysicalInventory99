@@ -68,6 +68,7 @@
             android:layout_height="wrap_content"
             android:text="Username"
             android:layout_marginLeft="10sp"
+
             />
         <EditText
             android:layout_width="match_parent"
@@ -126,8 +127,65 @@
             android:background="@drawable/button_style"/>
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:layout_marginTop="20sp">
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tvCompany"
+            android:singleLine="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_weight="2.25"
+            android:layout_marginLeft="15sp"
+            android:text="Company:"/>
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinCompany"
+            android:spinnerMode="dropdown"
+            android:layout_weight="1"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            style="@style/MySpinnerLook" />
+
+        </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:layout_marginTop="15sp">
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tvSite"
+            android:singleLine="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_weight="2.25"
+            android:layout_marginLeft="15sp"
+            android:text="Site:"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinSite"
+            android:spinnerMode="dropdown"
+            style="@style/MySpinnerLook"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+   <!-- <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tableLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -145,7 +203,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-
+            android:layout_marginLeft="15sp"
             android:text="Company:"
 />
 
@@ -156,6 +214,7 @@
             android:spinnerMode="dropdown"
             android:layout_weight="1"
             android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
             style="@style/MySpinnerLook" />
         </TableRow>
 
@@ -181,6 +240,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:layout_marginLeft="15sp"
             android:text="Site:"/>
 
         <Spinner
@@ -190,30 +250,40 @@
             android:spinnerMode="dropdown"
             style="@style/MySpinnerLook"
             android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
             android:layout_weight="1"
             />
         </TableRow>
-        <TableRow>
+    </TableLayout>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:layout_marginTop="20sp"
+        >
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Reset"
-                android:layout_margin="5sp"
+                android:text="Edit/Reset"
                 android:id="@+id/btnWebReset"
                 android:layout_weight="1"
                 android:background="@drawable/button_style"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"/>
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Save"
-                android:layout_margin="5sp"
                 android:id="@+id/btnWebSave"
                 android:layout_weight="1"
                 android:background="@drawable/button_style"/>
 
-        </TableRow>
+</LinearLayout>
 
-    </TableLayout>
 
 
 

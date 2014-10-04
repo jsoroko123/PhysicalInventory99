@@ -49,6 +49,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public static final String Username = "userKey";
     public static final String Password = "passKey";
     public static final String Company = "companyKey";
+    public static final String Verified = "verifiedKey";
     public static final String Site = "siteKey";
     public static ArrayAdapter<String> adapter;
     public static String URL = null;
