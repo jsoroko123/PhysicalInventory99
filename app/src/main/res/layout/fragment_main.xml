@@ -35,12 +35,8 @@
                 android:background="@drawable/text"
                 android:textColor="@color/black"
                 android:layout_weight=".70"
-                android:padding="10sp"/>
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                />
+                android:padding="10sp"
+                android:layout_marginRight="10sp"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -119,13 +115,9 @@
             android:enabled="false"
             android:textColor="@color/black"
             android:layout_weight=".70"
-            android:padding="10sp"/>
+            android:padding="10sp"
+            android:layout_marginRight="10sp"/>
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -154,12 +146,8 @@
                 android:background="@drawable/text3"
                 android:textColor="@color/black"
                 android:layout_weight=".70"
-                android:padding="10sp"/>
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".25"
-                />
+                android:padding="10sp"
+                android:layout_marginRight="10sp"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

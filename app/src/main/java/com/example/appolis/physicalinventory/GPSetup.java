@@ -3,7 +3,6 @@ package com.example.appolis.physicalinventory;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
@@ -32,6 +31,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
     Button btnValidate, btnReset, btnSave;
     Spinner spnCompany, spnWarehouse;
     Toast toast = null;
+    boolean isPushed = false;
     public long lastBackPressTime = 0;
     private static final String METHOD_NAME = "GetCompanyList";
     private static final String SOAP_ACTION = "http://tempuri.org/GetCompanyList";
@@ -40,6 +40,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
     private static ArrayList<String> companyList = new ArrayList<>();
     private static ArrayList<String> warehouseList = new ArrayList<>();
     private static String  company, site;
+    boolean isValid;
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         super.onCreate(savedInstanceState);
@@ -63,7 +64,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         etUserName.setText( MainActivity.prefs.getString(MainActivity.Username, ""));
         etPassword.setText( MainActivity.prefs.getString(MainActivity.Password, ""));
 
-       if (MainActivity.prefs.getString(MainActivity.Verified, "").equals("True")){
+       if (MainActivity.prefs.getString(MainActivity.Verified, "").equals("True") && !MainActivity.prefs.getString(MainActivity.Url, "").isEmpty()){
            etWebUrl.setEnabled(false);
            etDomain.setEnabled(false);
            etUserName.setEnabled(false);
@@ -77,7 +78,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
            btnValidate.setEnabled(false);
            btnSave.setEnabled(false);
           GetCompanyList(MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Url, ""),true);
-            GetWarehouseList(MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
+            GetWarehouseList(MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Url, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                    android.R.layout.simple_spinner_item, companyList);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -127,41 +128,13 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         switch(view.getId()){
 
             case R.id.btnWebUrl:
-               boolean isValid =  GetCompanyList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), false);
+                isValid =  GetCompanyList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), false);
+                isPushed = true;
                 if(isValid){
-
-
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
                     adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spnCompany.setAdapter(adapter);
 
-                    spnCompany.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            GetWarehouseList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), adapterView.getItemAtPosition(i).toString());
-                            spnWarehouse.setAdapter(adapter2);
-                            company = adapterView.getItemAtPosition(i).toString();
-
-                            spnWarehouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                    site = adapterView.getItemAtPosition(i).toString();
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-
-                        }
-                    });
                 }
                 else {
                     spnCompany.setAdapter(null);
@@ -171,11 +144,8 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                 break;
 
             case R.id.btnWebReset:
-
-
-
-                if (lastBackPressTime < System.currentTimeMillis() - 3000) {
-                    CustomToast("Press Edit/Reset again to reset all settings.", R.color.encode_view);
+                if (lastBackPressTime < System.currentTimeMillis() - 4000) {
+                    CustomToast("Press Edit/Reset again to clear all.", R.color.encode_view);
                     etWebUrl.setEnabled(true);
                     etDomain.setEnabled(true);
                     etUserName.setEnabled(true);
@@ -188,7 +158,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                     etPassword.setBackground(getResources().getDrawable(R.drawable.text));
                     btnValidate.setEnabled(true);
                     btnSave.setEnabled(true);
-                    toast.show();
                     lastBackPressTime = System.currentTimeMillis();
                 } else  {
                     etWebUrl.setEnabled(true);
@@ -209,14 +178,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                     etPassword.setText("");
                     spnCompany.setAdapter(null);
                     spnWarehouse.setAdapter(null);
-                    SharedPreferences.Editor ed = MainActivity.prefs.edit();
-                    ed.putString(MainActivity.Url,"");
-                    ed.putString(MainActivity.Username,"");
-                    ed.putString(MainActivity.Password,"");
-                    ed.putString(MainActivity.Domain,"");
-                    ed.putString(MainActivity.Company,"");
-                    ed.putString(MainActivity.Site,"");
-                    ed.putString(MainActivity.Verified, "False");
+
                 }
             break;
             case R.id.btnWebSave:
@@ -226,7 +188,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                 String d = etDomain.getText().toString();
                 String c = company;
                 String s = site;
-
                 SharedPreferences.Editor ed = MainActivity.prefs.edit();
                 ed.putString(MainActivity.Url,w);
                 ed.putString(MainActivity.Username,u);
@@ -251,8 +212,61 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                 btnValidate.setEnabled(false);
                 btnSave.setEnabled(false);
                 CustomToast("Settings saved.", R.color.encode_view);
+
+                if(etWebUrl.getText().toString().isEmpty())
+                {
+                    ed.putString(MainActivity.Verified, "False");
+                }
+                if(MainActivity.prefs.getString(MainActivity.Verified, "").equals("True")) {
+                    FirstFragment f = new FirstFragment();
+                    FirstFragment.childList.clear();
+                    FirstFragment.theParentList.clear();
+                    FirstFragment.ItemLotCounts.clear();
+                    FirstFragment.Counted.clear();
+                    FirstFragment.Inventory.clear();
+                    FirstFragment.LotNumber.clear();
+                    f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                    f.ListGpVsCounted(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                    FirstFragment.listAdapter = new ExpandableListAdapter(this, FirstFragment.theParentList);
+                    FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
+                    FirstFragment.myList.invalidateViews();
+                }
                 break;
         }
+
+
+            spnCompany.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    GetWarehouseList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), adapterView.getItemAtPosition(i).toString());
+                    spnWarehouse.setAdapter(adapter2);
+                    if(isPushed){
+                        spnWarehouse.setAdapter(null);
+                    }
+                    isPushed = false;
+                    company = adapterView.getItemAtPosition(i).toString();
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+
+        spnWarehouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                site = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
     }
         public boolean GetCompanyList(String Domain, String UserName, String Password, String Url, boolean firstRun){
 
@@ -332,7 +346,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
     }
 
 
-    public void GetWarehouseList(String Domain, String UserName, String Password, String Company){
+    public void GetWarehouseList(String Domain, String UserName, String Password, String url, String Company){
         if(!Company.equals("---Select Company---")) {
             warehouseList.clear();
             SoapObject request = new SoapObject(MainFragment.NAMESPACE, METHOD_NAME2);
@@ -364,7 +378,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                     SoapEnvelope.VER11);
             envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(MainActivity.prefs.getString(MainActivity.Url, ""));
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(url);
 
             try {
                 androidHttpTransport.call(SOAP_ACTION2, envelope);

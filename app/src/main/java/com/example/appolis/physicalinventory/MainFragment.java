@@ -2,6 +2,7 @@ package com.example.appolis.physicalinventory;
 
 
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -66,7 +67,6 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         MainActivity.btnGo1 = (Button) rootView.findViewById(R.id.button1);
         MainActivity.btnGo2 = (Button) rootView.findViewById(R.id.button2);
         MainActivity.btnGo3 = (Button) rootView.findViewById(R.id.btnGo3);
-
         MainActivity.btnClear = (Button) rootView.findViewById(R.id.button3);
         MainActivity.btnNextCount = (Button) rootView.findViewById(R.id.button4);
         MainActivity.btnClearAll = (Button) rootView.findViewById(R.id.button12);
@@ -90,7 +90,8 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                 switch (view.getId()) {
                     case R.id.button1:
                         if (!MainActivity.etItem.getText().toString().isEmpty()) {
-                            boolean hasResults = GetItem(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                            if(MainActivity.prefs.getString(MainActivity.Verified, "").equals("True")){
+                            boolean hasResults = GetItem(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Company, ""));
                             if (hasResults) {
                                 FirstFragment.childList.clear();
                                 FirstFragment.theParentList.clear();
@@ -108,27 +109,46 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                                 MainActivity.tvUOMSchedule.setText(ItemInformation.getUoMSchedule());
                                 MainActivity.etItem.setEnabled(false);
                                 MainActivity.btn1.setEnabled(false);
-                                MainActivity.btn2.setEnabled(true);
-                                MainActivity.etLot.setEnabled(true);
-                                MainActivity.etLot.requestFocus();
-                                MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
-                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
-                                MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
-                                MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
-                                GetItemUOM(ItemInformation.getUoMSchedule(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                                if(ItemInformation.getLotTrackingInd().equals("1")){
+                                    MainActivity.btn2.setEnabled(true);
+                                    MainActivity.etLot.setEnabled(true);
+                                    MainActivity.etLot.requestFocus();
+                                    MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                                    MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
+                                    MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                                    MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
+                                }
+                                else{
+                                    MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                                    MainActivity.etLot.setText("");
+                                    MainActivity.etLot.setEnabled(false);
+                                    MainActivity.btn2.setEnabled(false);
+                                    MainActivity.btnGo3.setEnabled(true);
+                                    MainActivity.etQty.setEnabled(true);
+                                    MainActivity.etQty.requestFocus();
+                                    MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                    MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                    MainActivity.etLot.setHint("Lot Tracking N/A");
+                                }
+
+                                GetItemUOM(ItemInformation.getUoMSchedule(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
                                 DisplayUOMSpinner();
                                 FirstFragment.Counted.clear();
                                 FirstFragment.Inventory.clear();
                                 FirstFragment.LotNumber.clear();
-                                f.GetItemCounts(MainActivity.etItem.getText().toString());
-                                f.ListGpVsCounted(MainActivity.etItem.getText().toString());
+                                f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                                f.ListGpVsCounted(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                                 FirstFragment.listAdapter = new ExpandableListAdapter(getActivity(), FirstFragment.theParentList);
                                 FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                                 FirstFragment.myList.invalidateViews();
+                            }else{
+                                CustomToast("Invalid Item Number.", R.color.red);
+                                MainActivity.etItem.setText("");
+                            }
                             } else {
 
-                                    CustomToast("Invalid Item Number.", R.color.red);
-                                    MainActivity.etItem.setText("");
+                                CustomToast("Please validate connection settings.", R.color.red);
+                                MainActivity.etItem.setText("");
                             }
                         } else {
                             CustomToast("Please Enter or Scan the Item Number", R.color.red);
@@ -169,16 +189,30 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                         break;
                     case R.id.button3:
                         if (!MainActivity.etItem.isEnabled()) {
-                            if (!MainActivity.etLot.getText().toString().isEmpty()) {
+                            if (!MainActivity.etLot.getText().toString().isEmpty() || !MainActivity.etQty.getText().toString().isEmpty()) {
                                 Animation animationFadeIn2 = AnimationUtils.loadAnimation(getActivity(), R.anim.new_anim2);
                                 MainActivity.llSection2.startAnimation(animationFadeIn2);
-                                MainActivity.etLot.setText("");
-                                MainActivity.etQty.setText("");
-                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
-                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
-                                MainActivity.etLot.setEnabled(true);
-                                MainActivity.btnGo3.setEnabled(false);
-                                MainActivity.btn2.setEnabled(true);
+                                if(ItemInformation.getLotTrackingInd().equals("1")) {
+                                    MainActivity.etLot.setText("");
+                                    MainActivity.etQty.setText("");
+                                    MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
+                                    MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
+                                    MainActivity.etLot.setEnabled(true);
+                                    MainActivity.btnGo3.setEnabled(false);
+                                    MainActivity.btn2.setEnabled(true);
+                                }else{
+                                    MainActivity.etLot.setText("");
+                                    MainActivity.etQty.setText("");
+                                    MainActivity.etLot.setEnabled(false);
+                                    MainActivity.btn2.setEnabled(false);
+                                    MainActivity.btnGo3.setEnabled(true);
+                                    MainActivity.etQty.setEnabled(true);
+                                    MainActivity.etQty.requestFocus();
+                                    MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                    MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                    MainActivity.etLot.setHint("Lot Tracking N/A");
+                                    MainActivity.btnNextCount.setText("Complete Count");
+                                }
                                 MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
                                 MainActivity.btnNextCount.setEnabled(false);
                                 MainActivity.m.setEnabled(true);
@@ -192,17 +226,93 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                         if (MainActivity.btnNextCount.getText().toString().contains("Update")) {
                             String a = MainActivity.etLot.getTag().toString();
                             UpdateItemCount(Integer.valueOf(a), MainActivity.spinner.getSelectedItem().toString(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString());
-                        } else {
-                            InsertItemCount(MainActivity.etItem.getText().toString(), MainActivity.spinner.getSelectedItem().toString(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString());
                             Animation animationFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.new_anim);
                             MainActivity.llSection2.startAnimation(animationFadeIn);
-                            MainActivity.etLot.setText("");
-                            MainActivity.etQty.setText("");
-                            MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
-                            MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
-                            MainActivity.etLot.setEnabled(true);
-                            MainActivity.btnGo3.setEnabled(false);
-                            MainActivity.btn2.setEnabled(true);
+                            if(ItemInformation.getLotTrackingInd().equals("1")){
+                                MainActivity.btn2.setEnabled(true);
+                                MainActivity.etLot.setEnabled(true);
+                                MainActivity.etLot.requestFocus();
+                                MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
+                                MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                                MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
+                                MainActivity.etLot.setText("");
+                                MainActivity.etQty.setText("");
+
+
+                            }
+                            else{
+
+                                MainActivity.etLot.setText(MainActivity.etLot.getText().toString());
+                                MainActivity.etLot.setEnabled(false);
+                                MainActivity.btn2.setEnabled(false);
+                                MainActivity.btnGo3.setEnabled(true);
+                                MainActivity.etQty.setEnabled(true);
+                                MainActivity.etQty.requestFocus();
+                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                MainActivity.etQty.setText("");
+
+                            }
+
+                            MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+
+                            MainActivity.m.setEnabled(true);
+                            MainActivity.m.setIcon(getResources().getDrawable(R.drawable.barcode_icon));
+                            MainActivity.etLot.requestFocus();
+                            MainActivity.ll.setBackgroundColor(getResources().getColor(R.color.org));
+                            FirstFragment.Counted.clear();
+                            FirstFragment.Inventory.clear();
+                            FirstFragment.LotNumber.clear();
+                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            FirstFragment.listAdapter.notifyDataSetChanged();
+                            Toast toast = Toast.makeText(getActivity(), "Count Successfully Updated.", Toast.LENGTH_SHORT);
+                            LinearLayout toastLayout = (LinearLayout) toast.getView();
+                            TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                            toastTV.setTextSize(18);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toastTV.setTextColor(getResources().getColor(R.color.encode_view));
+                            toastTV.setBackground(getResources().getDrawable(R.drawable.gray_button));
+
+                            FirstFragment.theParentList.clear();
+                            FirstFragment.childList.clear();
+                            FirstFragment.ItemLotCounts.clear();
+                            f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            FirstFragment.listAdapter = new ExpandableListAdapter(getActivity(), FirstFragment.theParentList);
+                            FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
+                            FirstFragment.myList.invalidateViews();
+                            toast.show();
+                            MainActivity.btnNextCount.setText("Complete Count");
+                            MainActivity.btnNextCount.setEnabled(false);
+                        } else {
+                            InsertItemCount(MainActivity.etItem.getText().toString(), MainActivity.spinner.getSelectedItem().toString(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            Animation animationFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.new_anim);
+                            MainActivity.llSection2.startAnimation(animationFadeIn);
+                            if(ItemInformation.getLotTrackingInd().equals("1")){
+                                MainActivity.btn2.setEnabled(true);
+                                MainActivity.etLot.setEnabled(true);
+                                MainActivity.etLot.requestFocus();
+                                MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
+                                MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                                MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
+                                MainActivity.etLot.setText("");
+                                MainActivity.etQty.setText("");
+
+                            }
+                            else{
+
+                                MainActivity.etLot.setText(MainActivity.etLot.getText().toString());
+                                MainActivity.etLot.setEnabled(false);
+                                MainActivity.btn2.setEnabled(false);
+                                MainActivity.btnGo3.setEnabled(true);
+                                MainActivity.etQty.setEnabled(true);
+                                MainActivity.etQty.requestFocus();
+                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                MainActivity.etQty.setText("");
+                            }
                             MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
                             MainActivity.btnNextCount.setEnabled(false);
                             MainActivity.m.setEnabled(true);
@@ -212,7 +322,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.Counted.clear();
                             FirstFragment.Inventory.clear();
                             FirstFragment.LotNumber.clear();
-                            f.ListGpVsCounted(MainActivity.etItem.getText().toString());
+                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             FirstFragment.listAdapter.notifyDataSetChanged();
                             Toast toast = Toast.makeText(getActivity(), "Item Lot Successfully Counted.", Toast.LENGTH_SHORT);
                             LinearLayout toastLayout = (LinearLayout) toast.getView();
@@ -225,8 +335,8 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.theParentList.clear();
                             FirstFragment.childList.clear();
                             FirstFragment.ItemLotCounts.clear();
-                            f.GetItemCounts(MainActivity.etItem.getText().toString());
-                            f.ListGpVsCounted(MainActivity.etItem.getText().toString());
+                            f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             FirstFragment.listAdapter = new ExpandableListAdapter(getActivity(), FirstFragment.theParentList);
                             FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                             FirstFragment.myList.invalidateViews();
@@ -273,6 +383,9 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                             FirstFragment.myList.invalidateViews();
                             MainActivity.btnNextCount.setText("Complete Count");
+                            MainActivity.etLot.setHint("Scan or Enter Lot Number");
+
+
                         }
 
                         break;
@@ -288,7 +401,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
             }
     }
 
-    public boolean GetItem(String ItemNumber, String Domain, String UserName, String Password){
+    public boolean GetItem(String ItemNumber, String Domain, String UserName, String Password, String Company){
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
         PropertyInfo CasePI = new PropertyInfo();
         CasePI.setName("ItemNumber");
@@ -311,6 +424,12 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         CasePI = new PropertyInfo();
         CasePI.setName("Password");
         CasePI.setValue(Password);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
+        CasePI.setName("company");
+        CasePI.setValue(Company);
         CasePI.setType(String.class);
         request.addProperty(CasePI);
 
@@ -340,6 +459,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                     ii.setpUom(info.getProperty("pUom").toString());
                     ii.setSUom(info.getProperty("SUom").toString());
                     ii.setUoMSchedule(info.getProperty("uoMSchedule").toString());
+                    ii.setLotTrackingInd(info.getProperty("lotTrackingInd").toString());
                 }
 
         }
@@ -353,7 +473,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         return hasResults;
     }
 
-    public void GetItemUOM(String uomSchedule, String Domain, String UserName, String Password){
+    public void GetItemUOM(String uomSchedule, String Domain, String UserName, String Password, String Company){
         ItemInformation.clearItemUOmList();
         ArrayList<String> itemUOM = new ArrayList<>();
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME2);
@@ -378,6 +498,12 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         CasePI = new PropertyInfo();
         CasePI.setName("Password");
         CasePI.setValue(Password);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
+        CasePI.setName("company");
+        CasePI.setValue(Company);
         CasePI.setType(String.class);
         request.addProperty(CasePI);
 
@@ -454,7 +580,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void InsertItemCount(String itemNumber,  String uom, String lotNumber, String qty){
+    public void InsertItemCount(String itemNumber,  String uom, String lotNumber, String qty, String company, String Site){
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME4);
         PropertyInfo CasePI = new PropertyInfo();
         CasePI.setName("ItemNumber");
@@ -477,6 +603,18 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         CasePI = new PropertyInfo();
         CasePI.setName("Qty");
         CasePI.setValue(qty);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
+        CasePI.setName("company");
+        CasePI.setValue(company);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
+        CasePI.setName("siteID");
+        CasePI.setValue(Site);
         CasePI.setType(String.class);
         request.addProperty(CasePI);
 

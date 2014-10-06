@@ -36,7 +36,7 @@ import java.util.ArrayList;
         public static ArrayList<String> Counted = new ArrayList<String>();
         public static TextView ciItemNumber, ciLotNumber, ciUom,ciQty, ciDate;
 
-        public static String itemNum, lotNum, uom, qty, datePart;
+        public static String itemNum, lotNum, uom, qty, datePart, timePart;
 
         public static ExpandableListAdapter listAdapter;
         public static ExpandableListView myList;
@@ -94,8 +94,8 @@ import java.util.ArrayList;
                                 theParentList.clear();
                                 childList.clear();
                                 ItemLotCounts.clear();
-                                GetItemCounts(MainActivity.etItem.getText().toString());
-                                ListGpVsCounted(MainActivity.etItem.getText().toString());
+                                GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                                ListGpVsCounted(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                                 listAdapter = new ExpandableListAdapter(getActivity(),  FirstFragment.theParentList);
                                 myList.setAdapter(FirstFragment.listAdapter);
                                 myList.invalidateViews();
@@ -105,13 +105,27 @@ import java.util.ArrayList;
                             public void onClick(DialogInterface dialog, int id) {
                                 MainActivity.pager.setCurrentItem(1);
                                 MainActivity.btnNextCount.setText("Update Count");
-                                MainActivity.etLot.setText(lotNum);
-                                MainActivity.etQty.setText(qty);
-                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
-                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
-                                MainActivity.etLot.setEnabled(true);
-                                MainActivity.btn2.setEnabled(true);
-                                MainActivity.btnGo3.setEnabled(false);
+                                if(ItemInformation.getLotTrackingInd().equals("1")) {
+                                    MainActivity.etLot.setText(lotNum);
+                                    MainActivity.etQty.setText(qty);
+                                    MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
+                                    MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
+                                    MainActivity.etLot.setEnabled(true);
+                                    MainActivity.btn2.setEnabled(true);
+                                    MainActivity.btnGo3.setEnabled(false);
+                                }else{
+                                    MainActivity.etLot.setText("");
+                                    MainActivity.etQty.setText(qty);
+                                    MainActivity.etLot.setEnabled(false);
+                                    MainActivity.btn2.setEnabled(false);
+                                    MainActivity.btnGo3.setEnabled(true);
+                                    MainActivity.etQty.setEnabled(true);
+                                    MainActivity.etQty.requestFocus();
+                                    MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                    MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                    MainActivity.etLot.setHint("Lot Tracking N/A");
+                                }
+
                                 MainActivity.etLot.setTag(Integer.valueOf(tv.getTag().toString()));
                                 MainActivity.m.setEnabled(true);
                                 MainActivity.m.setIcon(getResources().getDrawable(R.drawable.barcode_icon));
@@ -127,7 +141,6 @@ import java.util.ArrayList;
                 ciUom = (TextView) inflatedView.findViewById(R.id.ci_uom);
                 ciQty = (TextView) inflatedView.findViewById(R.id.ci_qty);
                 ciDate = (TextView) inflatedView.findViewById(R.id.ci_date);
-
                 ciItemNumber.setText(itemNum);
                 ciLotNumber.setText(lotNum);
                 ciUom.setText(uom);
@@ -142,7 +155,7 @@ import java.util.ArrayList;
         return rootView;
     }
 
-         public void ListGpVsCounted(String ItemNumber){
+         public void ListGpVsCounted(String ItemNumber, String Company, String Site){
             itemNum = ItemNumber;
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
             PropertyInfo CasePI = new PropertyInfo();
@@ -150,6 +163,18 @@ import java.util.ArrayList;
             CasePI.setValue(ItemNumber);
             CasePI.setType(String.class);
             request.addProperty(CasePI);
+
+             CasePI = new PropertyInfo();
+             CasePI.setName("company");
+             CasePI.setValue(Company);
+             CasePI.setType(String.class);
+             request.addProperty(CasePI);
+
+             CasePI = new PropertyInfo();
+             CasePI.setName("siteID");
+             CasePI.setValue(Site);
+             CasePI.setType(String.class);
+             request.addProperty(CasePI);
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
                     SoapEnvelope.VER11);
@@ -167,18 +192,28 @@ import java.util.ArrayList;
 
                     Object property = response.getProperty(i);
                     SoapObject info = (SoapObject) property;
-
-                    parentlotNum = info.getProperty("LotNumber").toString().trim();
+                    if(ItemInformation.getLotTrackingInd().equals("1")) {
+                        parentlotNum = info.getProperty("LotNumber").toString().trim();
+                    }else{
+                        parentlotNum = "Lot Tracking N/A";
+                    }
                     parentinvent = info.getProperty("Inventory").toString().trim();
                     parentassign = info.getProperty("Counted").toString().trim();
                     childList = new ArrayList<ChildRow>();
-                    for(int a=0;a<ItemLotCounts.size();a++){
-
-                        if(parentlotNum.toUpperCase().equals(ItemLotCounts.get(a).getLotNumber().toUpperCase())){
-                            ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), ItemLotCounts.get(a).getLotNumber(),ItemLotCounts.get(a).getQty(),ItemLotCounts.get(a).getDateCreated(),ItemLotCounts.get(a).getBinNumber());
+                    for(int a=0;a<ItemLotCounts.size();a++) {
+                        if (ItemInformation.getLotTrackingInd().equals("1")) {
+                            if (parentlotNum.toUpperCase().equals(ItemLotCounts.get(a).getLotNumber().toUpperCase())) {
+                                ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), ItemLotCounts.get(a).getLotNumber(), ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
+                                childList.add(ch);
+                            }
+                        }
+                        else {
+                            ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), "Lot Tracking N/A", ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
                             childList.add(ch);
                         }
                     }
+
+
                     ParentRow p = new ParentRow(parentlotNum, parentinvent, parentassign, childList);
                     theParentList.add(p);
                 }
@@ -189,13 +224,25 @@ import java.util.ArrayList;
             }
          }
 
-         public void GetItemCounts(String ItemNumber){
+         public void GetItemCounts(String ItemNumber, String Company, String Site){
             SoapObject request2 = new SoapObject(NAMESPACE, METHOD_NAME2);
             PropertyInfo CasePI2 = new PropertyInfo();
-            CasePI2.setName("ItemNumber");
-            CasePI2.setValue(ItemNumber);
-            CasePI2.setType(String.class);
-            request2.addProperty(CasePI2);
+             CasePI2.setName("ItemNumber");
+             CasePI2.setValue(ItemNumber);
+             CasePI2.setType(String.class);
+             request2.addProperty(CasePI2);
+
+             CasePI2 = new PropertyInfo();
+             CasePI2.setName("company");
+             CasePI2.setValue(Company);
+             CasePI2.setType(String.class);
+             request2.addProperty(CasePI2);
+
+             CasePI2 = new PropertyInfo();
+             CasePI2.setName("siteID");
+             CasePI2.setValue(Site);
+             CasePI2.setType(String.class);
+             request2.addProperty(CasePI2);
 
             SoapSerializationEnvelope envelope2 = new SoapSerializationEnvelope(
                     SoapEnvelope.VER11);
@@ -251,12 +298,19 @@ import java.util.ArrayList;
                 for(int i=0;i<response2.getPropertyCount();i++){
                     Object property2 = response2.getProperty(i);
                     SoapObject info2 = (SoapObject) property2;
-                    lotNum = info2.getProperty("LotNumber").toString();
+                    if(ItemInformation.getLotTrackingInd().equals("1")) {
+                        lotNum = info2.getProperty("LotNumber").toString();
+                    } else{
+                        lotNum = "Lot Tracking N/A";
+                    }
                     uom = info2.getProperty("Uom").toString();
                     qty = info2.getProperty("Qty").toString();
                     String date = info2.getProperty("DateCreated").toString();
                     String[] newDate = date.split("T");
                     datePart = newDate[0];
+                    String time = newDate[1];
+
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

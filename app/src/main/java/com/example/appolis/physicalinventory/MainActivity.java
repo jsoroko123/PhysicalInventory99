@@ -172,13 +172,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     String uom = newContent[1];
                     int spinnerPosition = 0;
                     String lotNumber = newContent[2];
-                    boolean hasResults = mf.GetItem(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                    boolean hasResults = mf.GetItem(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Company, ""));
                     if(hasResults) {
 
-                        mf.GetItemUOM(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                        mf.GetItemUOM(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
                         DisplayUOMSpinner();
                             etItem.setText(itemNumber);
-                            etLot.setText(lotNumber);
+
                             ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
                             spinnerPosition = myAdap.getPosition(uom);
                             spinner.setSelection(spinnerPosition);
@@ -191,17 +191,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             tvPUom.setText(ItemInformation.getpUom());
                             tvSUom.setText(ItemInformation.getSUom());
                             tvUOMSchedule.setText(ItemInformation.getUoMSchedule());
-                            etItem.setEnabled(false);
-                            btn1.setEnabled(false);
-                            etLot.setEnabled(false);
-                            btn2.setEnabled(false);
-                            etItem.setBackground(getResources().getDrawable(R.drawable.text2));
-                            etLot.setBackground(getResources().getDrawable(R.drawable.text2));
-                            etQty.setBackground(getResources().getDrawable(R.drawable.text));
-                            etQty.setEnabled(true);
-                            btnGo3.setEnabled(true);
-                            llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
-                            llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                            if(ItemInformation.getLotTrackingInd().equals("1")) {
+                                etLot.setText(lotNumber);
+                                etItem.setEnabled(false);
+                                btn1.setEnabled(false);
+                                etLot.setEnabled(false);
+                                btn2.setEnabled(false);
+                                etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                                etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                etQty.setEnabled(true);
+                                btnGo3.setEnabled(true);
+                                llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
+                                llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                            }
+                            else{
+                                MainActivity.etLot.setText(MainActivity.etLot.getText().toString());
+                                MainActivity.etLot.setEnabled(false);
+                                MainActivity.btn2.setEnabled(false);
+                                MainActivity.btnGo3.setEnabled(true);
+                                MainActivity.etQty.setEnabled(true);
+                                MainActivity.etQty.requestFocus();
+                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                                MainActivity.etLot.setHint("Lot Tracking N/A");
+
+                            }
                         FirstFragment.Counted.clear();
                         FirstFragment.Inventory.clear();
                         FirstFragment.LotNumber.clear();
@@ -209,8 +224,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         FirstFragment.theParentList.clear();
                         FirstFragment.childList.clear();
                         FirstFragment.ItemLotCounts.clear();
-                        f.GetItemCounts(MainActivity.etItem.getText().toString());
-                        f.ListGpVsCounted(MainActivity.etItem.getText().toString());
+                        f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                        f.ListGpVsCounted(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                         FirstFragment.listAdapter = new ExpandableListAdapter(this,  FirstFragment.theParentList);
                         FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                         FirstFragment.myList.invalidateViews();
@@ -240,7 +255,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
                 else {
                     if (etItem.isEnabled()) {
-                        boolean hasResults = mf.GetItem(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                        boolean hasResults = mf.GetItem(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Company, ""));
                         if(hasResults) {
                             //pager.setOnTouchListener(null);
                             pager.setCurrentItem(1);
@@ -262,7 +277,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             etLot.setBackground(getResources().getDrawable(R.drawable.text));
                             llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
                             llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
-                            mf.GetItemUOM(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                            mf.GetItemUOM(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
                             DisplayUOMSpinner();
                             FirstFragment.Inventory.clear();
                             FirstFragment.LotNumber.clear();
@@ -270,8 +285,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             FirstFragment.theParentList.clear();
                             FirstFragment.childList.clear();
                             FirstFragment.ItemLotCounts.clear();
-                            f.GetItemCounts(MainActivity.etItem.getText().toString());
-                            f.ListGpVsCounted(MainActivity.etItem.getText().toString());
+                            f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             FirstFragment.listAdapter = new ExpandableListAdapter(this,  FirstFragment.theParentList);
                             FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                             FirstFragment.myList.invalidateViews();
@@ -322,7 +337,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         if (this.lastBackPressTime < System.currentTimeMillis() - 4000) {
-            toast = Toast.makeText(this, "Press back again to close application.", 4000);
+            toast = Toast.makeText(this, "Press back again to close application.", Toast.LENGTH_LONG);
             toast.show();
             this.lastBackPressTime = System.currentTimeMillis();
         } else {

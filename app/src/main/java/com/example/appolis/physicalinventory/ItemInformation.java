@@ -15,6 +15,16 @@ import java.util.ArrayList;
     public static String pUom;
     public static String SUom;
     public static String uoMSchedule;
+
+    public static String getLotTrackingInd() {
+        return LotTrackingInd;
+    }
+
+    public static void setLotTrackingInd(String lotTrackingInd) {
+        LotTrackingInd = lotTrackingInd;
+    }
+
+    public static String LotTrackingInd;
     public static ArrayList<String> itemUOM = new ArrayList<>();
 
     public ItemInformation(){
