@@ -34,7 +34,7 @@ import java.util.ArrayList;
         public static ArrayList<String> LotNumber = new ArrayList<String>();
         public static ArrayList<String> Inventory = new ArrayList<String>();
         public static ArrayList<String> Counted = new ArrayList<String>();
-        public static TextView ciItemNumber, ciLotNumber, ciUom,ciQty, ciDate;
+        public static TextView ciItemNumber, ciLotNumber, ciUom,ciQty, ciDate, ciSite;
 
         public static String itemNum, lotNum, uom, qty, datePart, timePart;
 
@@ -59,6 +59,12 @@ import java.util.ArrayList;
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_inventory_history, container, false);
             myList = (ExpandableListView) rootView.findViewById(R.id.listView);
+            MainActivity.htvItemNum = (TextView) rootView.findViewById(R.id.tvffItem);
+            MainActivity.htvBaseUom = (TextView) rootView.findViewById(R.id.tvffUom);
+            MainActivity.htvSite = (TextView) rootView.findViewById(R.id.tvffSite);
+            MainActivity.htvItemNum.setText(ItemInformation.getItemNumber());
+            MainActivity.htvBaseUom.setText(ItemInformation.getSUom());
+            MainActivity.htvSite.setText(MainActivity.prefs.getString(MainActivity.Site, ""));
             listAdapter = new ExpandableListAdapter(getActivity(), theParentList);
             myList.setAdapter(listAdapter);
             myList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -141,11 +147,13 @@ import java.util.ArrayList;
                 ciUom = (TextView) inflatedView.findViewById(R.id.ci_uom);
                 ciQty = (TextView) inflatedView.findViewById(R.id.ci_qty);
                 ciDate = (TextView) inflatedView.findViewById(R.id.ci_date);
+                ciSite = (TextView) inflatedView.findViewById(R.id.ci_location);
                 ciItemNumber.setText(itemNum);
                 ciLotNumber.setText(lotNum);
                 ciUom.setText(uom);
                 ciQty.setText(qty);
                 ciDate.setText(datePart);
+                ciSite.setText(MainActivity.prefs.getString(MainActivity.Site, ""));
 
                 builder.show();
 

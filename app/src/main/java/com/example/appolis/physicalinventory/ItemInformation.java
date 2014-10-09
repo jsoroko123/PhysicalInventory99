@@ -1,6 +1,9 @@
 package com.example.appolis.physicalinventory;
 
+import android.util.Pair;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jeffery on 9/10/2014.
@@ -15,6 +18,15 @@ import java.util.ArrayList;
     public static String pUom;
     public static String SUom;
     public static String uoMSchedule;
+    public static String site;
+
+    public static String getSite() {
+        return site;
+    }
+
+    public static void setSite(String site) {
+        ItemInformation.site = site;
+    }
 
     public static String getLotTrackingInd() {
         return LotTrackingInd;
@@ -25,7 +37,7 @@ import java.util.ArrayList;
     }
 
     public static String LotTrackingInd;
-    public static ArrayList<String> itemUOM = new ArrayList<>();
+    public static ArrayList<Pair> itemUOM = new ArrayList<>();
 
     public ItemInformation(){
 
@@ -105,13 +117,14 @@ import java.util.ArrayList;
         setpUom("");
         setSUom("");
         setUoMSchedule("");
+        setSite("");
     }
 
-    public static ArrayList<String> getItemUOMList() {
+    public static ArrayList<Pair> getItemUOMList() {
         return itemUOM;
     }
 
-    public static void setItemUOmList(ArrayList<String> arrList) {
+    public static void setItemUOmList(ArrayList<Pair> arrList) {
         itemUOM = arrList;
     }
 
@@ -119,10 +132,12 @@ import java.util.ArrayList;
         itemUOM.clear();
     }
 
+    public static void ConvertToBaseUom(){
+
+
+    }
 
 
 
 }
-
-
 

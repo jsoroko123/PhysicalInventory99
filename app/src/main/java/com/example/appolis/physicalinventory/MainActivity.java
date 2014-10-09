@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public static LinearLayout ll;
     public static LinearLayout llSection1, llSection2, llMainFrag;
     public static TextView tvItemNumber, tvItemDescription, tvStdCost, tvCurrCost, tvItemShWt, tvPUom, tvSUom, tvUOMSchedule;
+    public static TextView htvItemNum, htvBaseUom, htvSite;
     public static List<Fragment> fragments = new ArrayList<>();
     public static MenuItem m;
     public static SharedPreferences prefs;
@@ -175,7 +176,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     boolean hasResults = mf.GetItem(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Company, ""));
                     if(hasResults) {
 
-                        mf.GetItemUOM(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Password, ""));
+                        mf.GetItemUOM(ItemInformation.getUoMSchedule(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
                         DisplayUOMSpinner();
                             etItem.setText(itemNumber);
 
@@ -277,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             etLot.setBackground(getResources().getDrawable(R.drawable.text));
                             llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
                             llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
-                            mf.GetItemUOM(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
+                            mf.GetItemUOM(ItemInformation.getUoMSchedule(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
                             DisplayUOMSpinner();
                             FirstFragment.Inventory.clear();
                             FirstFragment.LotNumber.clear();
@@ -349,23 +350,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void DisplayUOMSpinner() {
-        adapter = new ArrayAdapter<String>(this,
+    /*    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, ItemInformation.getItemUOMList());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        MainActivity.spinner.setAdapter(adapter);
+        MainActivity.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });
+        });*/
 
     }
-
 
 
 

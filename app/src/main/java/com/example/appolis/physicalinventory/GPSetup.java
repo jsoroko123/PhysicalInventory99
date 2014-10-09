@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.app.ProgressDialog;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
     Button btnValidate, btnReset, btnSave;
     Spinner spnCompany, spnWarehouse;
     Toast toast = null;
+    ProgressDialog progressDialog;
     boolean isPushed = false;
     public long lastBackPressTime = 0;
     private static final String METHOD_NAME = "GetCompanyList";
@@ -57,8 +60,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         etPassword = (EditText) findViewById(R.id.et_webPassword);
         spnCompany = (Spinner) findViewById(R.id.spinCompany);
         spnWarehouse = (Spinner) findViewById(R.id.spinSite);
-
-
         etWebUrl.setText( MainActivity.prefs.getString(MainActivity.Url, ""));
         etDomain.setText( MainActivity.prefs.getString(MainActivity.Domain, ""));
         etUserName.setText( MainActivity.prefs.getString(MainActivity.Username, ""));
@@ -128,7 +129,34 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         switch(view.getId()){
 
             case R.id.btnWebUrl:
-                isValid =  GetCompanyList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), false);
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setMax(100);
+                progressDialog.setMessage("Validating....");
+                progressDialog.setTitle("Web Service Validation");
+                progressDialog.show();
+
+                new Thread() {
+
+                    public void run() {
+
+                        try{
+                            isValid =  GetCompanyList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), false);
+                            sleep(10000);
+
+                        } catch (Exception e) {
+
+                            Log.e("tag", e.getMessage());
+
+                        }
+
+
+                        progressDialog.dismiss();
+
+                    }
+
+                }.start();
+
+
                 isPushed = true;
                 if(isValid){
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -186,8 +214,8 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                 String u = etUserName.getText().toString();
                 String p = etPassword.getText().toString();
                 String d = etDomain.getText().toString();
-                String c = company;
-                String s = site;
+                String c = MainActivity.prefs.getString(MainActivity.Company, company);
+                String s = MainActivity.prefs.getString(MainActivity.Site, site);
                 SharedPreferences.Editor ed = MainActivity.prefs.edit();
                 ed.putString(MainActivity.Url,w);
                 ed.putString(MainActivity.Username,u);
@@ -211,6 +239,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                 etPassword.setBackground(getResources().getDrawable(R.drawable.text3));
                 btnValidate.setEnabled(false);
                 btnSave.setEnabled(false);
+                MainActivity.htvSite.setText(MainActivity.prefs.getString(MainActivity.Site, ""));
                 CustomToast("Settings saved.", R.color.encode_view);
 
                 if(etWebUrl.getText().toString().isEmpty())
@@ -245,6 +274,8 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                     }
                     isPushed = false;
                     company = adapterView.getItemAtPosition(i).toString();
+                    SharedPreferences.Editor ed = MainActivity.prefs.edit();
+                    ed.putString(MainActivity.Company,adapterView.getItemAtPosition(i).toString());
 
                 }
 
@@ -259,6 +290,8 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 site = adapterView.getItemAtPosition(i).toString();
+                SharedPreferences.Editor ed = MainActivity.prefs.edit();
+                ed.putString(MainActivity.Site,adapterView.getItemAtPosition(i).toString());
             }
 
             @Override
@@ -413,6 +446,9 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         toastTV.setTextColor(getResources().getColor(color));
         toast.show();
     }
+
+
+
 
 
 

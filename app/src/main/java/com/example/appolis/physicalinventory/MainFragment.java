@@ -2,10 +2,11 @@ package com.example.appolis.physicalinventory;
 
 
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +25,12 @@ import android.widget.Toast;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public  class MainFragment extends Fragment implements View.OnClickListener {
@@ -109,14 +112,16 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                                 MainActivity.tvUOMSchedule.setText(ItemInformation.getUoMSchedule());
                                 MainActivity.etItem.setEnabled(false);
                                 MainActivity.btn1.setEnabled(false);
-                                if(ItemInformation.getLotTrackingInd().equals("1")){
+                                MainActivity.htvItemNum.setText(ItemInformation.getItemNumber());
+                                MainActivity.htvBaseUom.setText(ItemInformation.getSUom());
+                                MainActivity.htvSite.setText(MainActivity.prefs.getString(MainActivity.Site, ""));
+                                    if(ItemInformation.getLotTrackingInd().equals("1")){
                                     MainActivity.btn2.setEnabled(true);
                                     MainActivity.etLot.setEnabled(true);
                                     MainActivity.etLot.requestFocus();
                                     MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
                                     MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
-                                    MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
-                                    MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
+
                                 }
                                 else{
                                     MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
@@ -130,7 +135,8 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                                     MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
                                     MainActivity.etLot.setHint("Lot Tracking N/A");
                                 }
-
+                                MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                                MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
                                 GetItemUOM(ItemInformation.getUoMSchedule(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
                                 DisplayUOMSpinner();
                                 FirstFragment.Counted.clear();
@@ -266,14 +272,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.LotNumber.clear();
                             f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             FirstFragment.listAdapter.notifyDataSetChanged();
-                            Toast toast = Toast.makeText(getActivity(), "Count Successfully Updated.", Toast.LENGTH_SHORT);
-                            LinearLayout toastLayout = (LinearLayout) toast.getView();
-                            TextView toastTV = (TextView) toastLayout.getChildAt(0);
-                            toastTV.setTextSize(18);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toastTV.setTextColor(getResources().getColor(R.color.encode_view));
-                            toastTV.setBackground(getResources().getDrawable(R.drawable.gray_button));
-
+                            CustomToast("Count Successfully Updated.", R.color.encode_view);
                             FirstFragment.theParentList.clear();
                             FirstFragment.childList.clear();
                             FirstFragment.ItemLotCounts.clear();
@@ -282,11 +281,10 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.listAdapter = new ExpandableListAdapter(getActivity(), FirstFragment.theParentList);
                             FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                             FirstFragment.myList.invalidateViews();
-                            toast.show();
                             MainActivity.btnNextCount.setText("Complete Count");
                             MainActivity.btnNextCount.setEnabled(false);
                         } else {
-                            InsertItemCount(MainActivity.etItem.getText().toString(), MainActivity.spinner.getSelectedItem().toString(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            InsertItemCount(MainActivity.etItem.getText().toString(), MainActivity.spinner.getSelectedItem().toString(), ItemInformation.getSUom(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString(), MainActivity.etQty.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             Animation animationFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.new_anim);
                             MainActivity.llSection2.startAnimation(animationFadeIn);
                             if(ItemInformation.getLotTrackingInd().equals("1")){
@@ -324,14 +322,11 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.LotNumber.clear();
                             f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             FirstFragment.listAdapter.notifyDataSetChanged();
-                            Toast toast = Toast.makeText(getActivity(), "Item Lot Successfully Counted.", Toast.LENGTH_SHORT);
-                            LinearLayout toastLayout = (LinearLayout) toast.getView();
-                            TextView toastTV = (TextView) toastLayout.getChildAt(0);
-                            toastTV.setTextSize(18);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toastTV.setTextColor(getResources().getColor(R.color.encode_view));
-                            toastTV.setBackground(getResources().getDrawable(R.drawable.gray_button));
-
+                            if(ItemInformation.getLotTrackingInd().equals("1")) {
+                                CustomToast("Item Lot Successfully Counted.", R.color.encode_view);
+                            }else{
+                                CustomToast("Item Successfully Counted.", R.color.encode_view);
+                            }
                             FirstFragment.theParentList.clear();
                             FirstFragment.childList.clear();
                             FirstFragment.ItemLotCounts.clear();
@@ -342,7 +337,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.myList.invalidateViews();
 
 
-                            toast.show();
+
                         }
                         break;
                     case R.id.button12:
@@ -384,6 +379,8 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.myList.invalidateViews();
                             MainActivity.btnNextCount.setText("Complete Count");
                             MainActivity.etLot.setHint("Scan or Enter Lot Number");
+                            MainActivity.htvItemNum.setText("");
+                            MainActivity.htvBaseUom.setText("");
 
 
                         }
@@ -475,7 +472,8 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
 
     public void GetItemUOM(String uomSchedule, String Domain, String UserName, String Password, String Company){
         ItemInformation.clearItemUOmList();
-        ArrayList<String> itemUOM = new ArrayList<>();
+
+        ArrayList<Pair> pUOM = new ArrayList<Pair>();
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME2);
         PropertyInfo CasePI = new PropertyInfo();
         CasePI.setName("sUOMSchedule");
@@ -523,8 +521,13 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
 
                 Object property = response.getProperty(i);
                 SoapObject info = (SoapObject) property;
-                String userName = info.getProperty("Uofm").toString();
-                itemUOM.add(userName.trim());
+                String uom = info.getProperty("Uofm").toString();
+                String eqUomQty = info.getProperty("EqUomQty").toString();
+
+
+
+                Pair pair = new Pair(uom.trim(), eqUomQty.trim());
+                pUOM.add(pair);
 
             }
         } catch (Exception e) {
@@ -533,7 +536,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
 
         }
 
-        ItemInformation.setItemUOmList(itemUOM);
+        ItemInformation.setItemUOmList(pUOM);
     }
 
     public void UpdateItemCount(int countID,  String uom, String lotNumber, String qty){
@@ -580,7 +583,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void InsertItemCount(String itemNumber,  String uom, String lotNumber, String qty, String company, String Site){
+    public void InsertItemCount(String itemNumber,  String uom, String baseUom, String lotNumber, String qty, String baseQty, String company, String Site){
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME4);
         PropertyInfo CasePI = new PropertyInfo();
         CasePI.setName("ItemNumber");
@@ -595,6 +598,12 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         request.addProperty(CasePI);
 
         CasePI = new PropertyInfo();
+        CasePI.setName("Baseuom");
+        CasePI.setValue(baseUom);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
         CasePI.setName("LotNumber");
         CasePI.setValue(lotNumber);
         CasePI.setType(String.class);
@@ -603,6 +612,12 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         CasePI = new PropertyInfo();
         CasePI.setName("Qty");
         CasePI.setValue(qty);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
+        CasePI.setName("BaseQty");
+        CasePI.setValue(baseQty);
         CasePI.setType(String.class);
         request.addProperty(CasePI);
 
@@ -638,7 +653,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     public void DisplayUOMSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+     /*   ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, ItemInformation.getItemUOMList());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         MainActivity.spinner.setAdapter(adapter);
@@ -652,7 +667,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });
+        });*/
 
     }
 
@@ -681,6 +696,75 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         });
 
         alertDialog1.show();
+    }
+
+    private class SoapAccessTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            //if you want, start progress dialog here
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String webResponse = "";
+            try{
+                SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+                PropertyInfo fromProp =new PropertyInfo();
+                fromProp.setName("ItemNumber");
+                //gets the first element from urls array
+                fromProp.setValue(urls[0]);
+                fromProp.setType(String.class);
+                request.addProperty(fromProp);
+
+                PropertyInfo toProp =new PropertyInfo();
+                toProp.setName("Domain");
+                //second element of the urls array
+                toProp.setValue(urls[1]);
+                toProp.setType(String.class);
+                request.addProperty(toProp);
+
+                toProp =new PropertyInfo();
+                toProp.setName("UserName");
+                //second element of the urls array
+                toProp.setValue(urls[2]);
+                toProp.setType(String.class);
+                request.addProperty(toProp);
+
+                toProp =new PropertyInfo();
+                toProp.setName("Password");
+                //second element of the urls array
+                toProp.setValue(urls[3]);
+                toProp.setType(String.class);
+                request.addProperty(toProp);
+
+                toProp =new PropertyInfo();
+                toProp.setName("company");
+                //second element of the urls array
+                toProp.setValue(urls[4]);
+                toProp.setType(String.class);
+                request.addProperty(toProp);
+
+                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                envelope.dotNet = true;
+                envelope.setOutputSoapObject(request);
+                HttpTransportSE androidHttpTransport = new HttpTransportSE(MainActivity.URL);
+
+                androidHttpTransport.call(SOAP_ACTION, envelope);
+                SoapPrimitive response = (SoapPrimitive)envelope.getResponse();
+                webResponse = response.toString();
+            }
+            catch(Exception e){
+                Toast.makeText(getActivity(),"Cannot access the web service"+e.toString(), Toast.LENGTH_LONG).show();
+            }
+            return webResponse;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+
+        }
     }
 
 

@@ -39,13 +39,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location:"
+            android:text="Site:"
             android:textSize="8pt"
             android:layout_margin="8dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location:"
+            android:text=""
             android:id="@+id/ci_location"
             android:textSize="8pt"
             android:layout_margin="8dp"/>
