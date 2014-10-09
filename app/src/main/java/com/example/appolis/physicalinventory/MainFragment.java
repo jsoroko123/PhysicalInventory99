@@ -648,7 +648,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-
+//
     public void DisplayUOMSpinner() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, ItemInformation.getItemUOMList());
