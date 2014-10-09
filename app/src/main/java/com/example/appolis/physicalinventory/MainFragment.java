@@ -523,9 +523,6 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                 SoapObject info = (SoapObject) property;
                 String uom = info.getProperty("Uofm").toString();
                 String eqUomQty = info.getProperty("EqUomQty").toString();
-
-
-
                 Pair pair = new Pair(uom.trim(), eqUomQty.trim());
                 pUOM.add(pair);
 
@@ -653,7 +650,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     public void DisplayUOMSpinner() {
-     /*   ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, ItemInformation.getItemUOMList());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         MainActivity.spinner.setAdapter(adapter);
@@ -667,7 +664,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });*/
+        });
 
     }
 
