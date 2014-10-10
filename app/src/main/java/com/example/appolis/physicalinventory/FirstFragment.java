@@ -164,72 +164,74 @@ import java.util.ArrayList;
     }
 
          public void ListGpVsCounted(String ItemNumber, String Company, String Site){
-            itemNum = ItemNumber;
-            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-            PropertyInfo CasePI = new PropertyInfo();
-            CasePI.setName("ItemNumber");
-            CasePI.setValue(ItemNumber);
-            CasePI.setType(String.class);
-            request.addProperty(CasePI);
+             if(!MainActivity.etItem.getText().toString().isEmpty()) {
+                 itemNum = ItemNumber;
+                 SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+                 PropertyInfo CasePI = new PropertyInfo();
+                 CasePI.setName("ItemNumber");
+                 CasePI.setValue(ItemNumber);
+                 CasePI.setType(String.class);
+                 request.addProperty(CasePI);
 
-             CasePI = new PropertyInfo();
-             CasePI.setName("company");
-             CasePI.setValue(Company);
-             CasePI.setType(String.class);
-             request.addProperty(CasePI);
+                 CasePI = new PropertyInfo();
+                 CasePI.setName("company");
+                 CasePI.setValue(Company);
+                 CasePI.setType(String.class);
+                 request.addProperty(CasePI);
 
-             CasePI = new PropertyInfo();
-             CasePI.setName("siteID");
-             CasePI.setValue(Site);
-             CasePI.setType(String.class);
-             request.addProperty(CasePI);
+                 CasePI = new PropertyInfo();
+                 CasePI.setName("siteID");
+                 CasePI.setValue(Site);
+                 CasePI.setType(String.class);
+                 request.addProperty(CasePI);
 
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-                    SoapEnvelope.VER11);
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(MainActivity.prefs.getString(MainActivity.Url, ""));
+                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                         SoapEnvelope.VER11);
+                 envelope.dotNet = true;
+                 envelope.setOutputSoapObject(request);
+                 HttpTransportSE androidHttpTransport = new HttpTransportSE(MainActivity.prefs.getString(MainActivity.Url, ""));
 
-            try {            androidHttpTransport.call(SOAP_ACTION, envelope);
-                SoapObject response = (SoapObject) envelope.getResponse();
-                String parentlotNum;
-                String parentinvent;
-                String parentassign;
+                 try {
+                     androidHttpTransport.call(SOAP_ACTION, envelope);
+                     SoapObject response = (SoapObject) envelope.getResponse();
+                     String parentlotNum;
+                     String parentinvent;
+                     String parentassign;
 
-                for(int i=0;i<response.getPropertyCount();i++){
+                     for (int i = 0; i < response.getPropertyCount(); i++) {
 
-                    Object property = response.getProperty(i);
-                    SoapObject info = (SoapObject) property;
-                    if(ItemInformation.getLotTrackingInd().equals("1")) {
-                        parentlotNum = info.getProperty("LotNumber").toString().trim();
-                    }else{
-                        parentlotNum = "Lot Tracking N/A";
-                    }
-                    parentinvent = info.getProperty("Inventory").toString().trim();
-                    parentassign = info.getProperty("Counted").toString().trim();
-                    childList = new ArrayList<ChildRow>();
-                    for(int a=0;a<ItemLotCounts.size();a++) {
-                        if (ItemInformation.getLotTrackingInd().equals("1")) {
-                            if (parentlotNum.toUpperCase().equals(ItemLotCounts.get(a).getLotNumber().toUpperCase())) {
-                                ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), ItemLotCounts.get(a).getLotNumber(), ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
-                                childList.add(ch);
-                            }
-                        }
-                        else {
-                            ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), "Lot Tracking N/A", ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
-                            childList.add(ch);
-                        }
-                    }
+                         Object property = response.getProperty(i);
+                         SoapObject info = (SoapObject) property;
+                         if (ItemInformation.getLotTrackingInd().equals("1")) {
+                             parentlotNum = info.getProperty("LotNumber").toString().trim();
+                         } else {
+                             parentlotNum = "Lot Tracking N/A";
+                         }
+                         parentinvent = info.getProperty("Inventory").toString().trim();
+                         parentassign = info.getProperty("Counted").toString().trim();
+                         childList = new ArrayList<ChildRow>();
+                         for (int a = 0; a < ItemLotCounts.size(); a++) {
+                             if (ItemInformation.getLotTrackingInd().equals("1")) {
+                                 if (parentlotNum.toUpperCase().equals(ItemLotCounts.get(a).getLotNumber().toUpperCase())) {
+                                     ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), ItemLotCounts.get(a).getLotNumber(), ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
+                                     childList.add(ch);
+                                 }
+                             } else {
+                                 ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), "Lot Tracking N/A", ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
+                                 childList.add(ch);
+                             }
+                         }
 
 
-                    ParentRow p = new ParentRow(parentlotNum, parentinvent, parentassign, childList);
-                    theParentList.add(p);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                String a= e.getMessage();
-                DisplayError(a);
-            }
+                         ParentRow p = new ParentRow(parentlotNum, parentinvent, parentassign, childList);
+                         theParentList.add(p);
+                     }
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                     String a = e.getMessage();
+                     DisplayError(a);
+                 }
+             }
          }
 
          public void GetItemCounts(String ItemNumber, String Company, String Site){

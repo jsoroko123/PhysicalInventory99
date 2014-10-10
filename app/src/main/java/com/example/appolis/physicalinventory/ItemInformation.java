@@ -132,7 +132,12 @@ import java.util.List;
         itemUOM.clear();
     }
 
-    public static void ConvertToBaseUom( ){
+    public static String GetBaseQuantity(String qtyCounted, String bcf ){
+        String qtyConverted;
+        double quantity = Double.valueOf(qtyCounted) * Double.valueOf(bcf);
+        qtyConverted = String.valueOf(quantity);
+
+        return qtyConverted;
 
 
     }

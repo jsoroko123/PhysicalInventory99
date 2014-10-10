@@ -1,11 +1,11 @@
 package com.example.appolis.physicalinventory;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.app.ProgressDialog;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +32,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
     Button btnValidate, btnReset, btnSave;
     Spinner spnCompany, spnWarehouse;
     Toast toast = null;
-    ProgressDialog progressDialog;
     boolean isPushed = false;
     public long lastBackPressTime = 0;
     private static final String METHOD_NAME = "GetCompanyList";
@@ -78,7 +76,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
            etPassword.setBackground(getResources().getDrawable(R.drawable.text3));
            btnValidate.setEnabled(false);
            btnSave.setEnabled(false);
-          GetCompanyList(MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Url, ""),true);
+            GetCompanyList(MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Url, ""),true);
             GetWarehouseList(MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Url, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                    android.R.layout.simple_spinner_item, companyList);
@@ -129,34 +127,7 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         switch(view.getId()){
 
             case R.id.btnWebUrl:
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setMax(100);
-                progressDialog.setMessage("Validating....");
-                progressDialog.setTitle("Web Service Validation");
-                progressDialog.show();
-
-                new Thread() {
-
-                    public void run() {
-
-                        try{
-                            isValid =  GetCompanyList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), false);
-                            sleep(10000);
-
-                        } catch (Exception e) {
-
-                            Log.e("tag", e.getMessage());
-
-                        }
-
-
-                        progressDialog.dismiss();
-
-                    }
-
-                }.start();
-
-
+                isValid =  GetCompanyList(etDomain.getText().toString(), etUserName.getText().toString(), etPassword.getText().toString(), etWebUrl.getText().toString(), false);
                 isPushed = true;
                 if(isValid){
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -214,8 +185,8 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                 String u = etUserName.getText().toString();
                 String p = etPassword.getText().toString();
                 String d = etDomain.getText().toString();
-                String c = MainActivity.prefs.getString(MainActivity.Company, company);
-                String s = MainActivity.prefs.getString(MainActivity.Site, site);
+                String c = company;
+                String s = site;
                 SharedPreferences.Editor ed = MainActivity.prefs.edit();
                 ed.putString(MainActivity.Url,w);
                 ed.putString(MainActivity.Username,u);
@@ -302,7 +273,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
 
     }
         public boolean GetCompanyList(String Domain, String UserName, String Password, String Url, boolean firstRun){
-
             companyList.clear();
             boolean isValid = true;
             SharedPreferences.Editor ed = MainActivity.prefs.edit();
@@ -446,9 +416,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
         toastTV.setTextColor(getResources().getColor(color));
         toast.show();
     }
-
-
-
 
 
 

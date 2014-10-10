@@ -284,14 +284,22 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             MainActivity.btnNextCount.setText("Complete Count");
                             MainActivity.btnNextCount.setEnabled(false);
                         } else {
-                            InsertItemCount(MainActivity.etItem.getText().toString(), MainActivity.spinner.getSelectedItem().toString(), ItemInformation.getSUom(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString(), MainActivity.etQty.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            String bcf = "1";
+                            for(int a=0;a<ItemInformation.getItemUOMList().size();a++) {
+                               if(ItemInformation.getItemUOMList().get(a).first.toString().equals(MainActivity.spinner.getSelectedItem().toString())){
+                                   bcf = ItemInformation.getItemUOMList().get(a).second.toString();
+                                    break;
+                                }
+
+                            }
+                            InsertItemCount(MainActivity.etItem.getText().toString(), MainActivity.spinner.getSelectedItem().toString(), ItemInformation.getSUom(), MainActivity.etLot.getText().toString(), MainActivity.etQty.getText().toString(), ItemInformation.GetBaseQuantity(MainActivity.etQty.getText().toString(), bcf), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                             Animation animationFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.new_anim);
                             MainActivity.llSection2.startAnimation(animationFadeIn);
                             if(ItemInformation.getLotTrackingInd().equals("1")){
                                 MainActivity.btn2.setEnabled(true);
                                 MainActivity.etLot.setEnabled(true);
                                 MainActivity.etLot.requestFocus();
-                                MainActivity.etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
                                 MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text));
                                 MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
                                 MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
@@ -580,7 +588,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void InsertItemCount(String itemNumber,  String uom, String baseUom, String lotNumber, String qty, String baseQty, String company, String Site){
+    public void InsertItemCount(String itemNumber, String uom, String baseUom, String lotNumber, String qty, String baseQty, String company, String Site){
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME4);
         PropertyInfo CasePI = new PropertyInfo();
         CasePI.setName("ItemNumber");
@@ -648,10 +656,14 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-////
     public void DisplayUOMSpinner() {
+        ArrayList<String> u = new ArrayList<>();
+        for(int a=0;a<ItemInformation.getItemUOMList().size();a++) {
+            u.add(ItemInformation.getItemUOMList().get(a).first.toString());
+
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item, ItemInformation.getItemUOMList());
+                android.R.layout.simple_spinner_item, u);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         MainActivity.spinner.setAdapter(adapter);
         MainActivity.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -666,7 +678,10 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-    }
+
+
+
+}
 
     public void CustomToast(String message, int color){
         Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_LONG);
