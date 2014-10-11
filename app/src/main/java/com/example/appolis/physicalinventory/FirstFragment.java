@@ -30,6 +30,8 @@ import java.util.ArrayList;
         private final String METHOD_NAME3 = "GetItemCount";
         private final String SOAP_ACTION4 = "http://tempuri.org/DeleteItemCount";
         private final String METHOD_NAME4 = "DeleteItemCount";
+        private final String SOAP_ACTION5 = "http://tempuri.org/InsertGPVariance";
+        private final String METHOD_NAME5 = "InsertGPVariance";
 
         public static ArrayList<String> LotNumber = new ArrayList<String>();
         public static ArrayList<String> Inventory = new ArrayList<String>();
@@ -330,6 +332,81 @@ import java.util.ArrayList;
 
 
         }
+
+        public void InsertGPVariance(String domain,String UserName, String Password,  String company, String Site, String itemNumber, String qty, String LotNumber, String sUom){
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME5);
+            PropertyInfo CasePI = new PropertyInfo();
+            CasePI.setName("Domain");
+            CasePI.setValue(domain);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("UserName");
+            CasePI.setValue(UserName);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("Password");
+            CasePI.setValue(Password);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("company");
+            CasePI.setValue(company);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("sWarehouseName");
+            CasePI.setValue(Site);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("sItemNumber");
+            CasePI.setValue(itemNumber);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("dQty");
+            CasePI.setValue(qty);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("sLotNumber");
+            CasePI.setValue(LotNumber);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            CasePI = new PropertyInfo();
+            CasePI.setName("sSellingUOM");
+            CasePI.setValue(sUom);
+            CasePI.setType(String.class);
+            request.addProperty(CasePI);
+
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                    SoapEnvelope.VER11);
+            envelope.dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE( MainActivity.prefs.getString(MainActivity.Url, ""));
+
+            try {
+                androidHttpTransport.call(SOAP_ACTION5, envelope);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+
+            }
+
+        }
+
 
         public void DeleteItemCount(int countID){
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME4);
