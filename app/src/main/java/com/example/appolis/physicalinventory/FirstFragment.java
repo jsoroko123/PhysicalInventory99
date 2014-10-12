@@ -2,12 +2,16 @@ package com.example.appolis.physicalinventory;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -17,6 +21,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
     public  class FirstFragment  extends Fragment implements View.OnClickListener {
@@ -37,7 +42,7 @@ import java.util.ArrayList;
         public static ArrayList<String> Inventory = new ArrayList<String>();
         public static ArrayList<String> Counted = new ArrayList<String>();
         public static TextView ciItemNumber, ciLotNumber, ciUom,ciQty, ciDate, ciSite;
-
+       Button btnGP;
         public static String itemNum, lotNum, uom, qty, datePart, timePart;
 
         public static ExpandableListAdapter listAdapter;
@@ -64,8 +69,10 @@ import java.util.ArrayList;
             MainActivity.htvItemNum = (TextView) rootView.findViewById(R.id.tvffItem);
             MainActivity.htvBaseUom = (TextView) rootView.findViewById(R.id.tvffUom);
             MainActivity.htvSite = (TextView) rootView.findViewById(R.id.tvffSite);
+            btnGP = (Button) rootView.findViewById(R.id.btnSyncGP);
             MainActivity.htvItemNum.setText(ItemInformation.getItemNumber());
             MainActivity.htvBaseUom.setText(ItemInformation.getSUom());
+            btnGP.setOnClickListener(this);
             MainActivity.htvSite.setText(MainActivity.prefs.getString(MainActivity.Site, ""));
             listAdapter = new ExpandableListAdapter(getActivity(), theParentList);
             myList.setAdapter(listAdapter);
@@ -79,6 +86,7 @@ import java.util.ArrayList;
                     previousGroup = groupPosition;
                 }
             });
+
 
             myList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -221,6 +229,7 @@ import java.util.ArrayList;
                              } else {
                                  ChildRow ch = new ChildRow(ItemLotCounts.get(a).getCountID(), ItemNumber, ItemLotCounts.get(a).getUOM(), "Lot Tracking N/A", ItemLotCounts.get(a).getQty(), ItemLotCounts.get(a).getDateCreated(), ItemLotCounts.get(a).getBinNumber());
                                  childList.add(ch);
+
                              }
                          }
 
@@ -278,8 +287,13 @@ import java.util.ArrayList;
                     String date = info2.getProperty("DateCreated").toString();
                     String[] newDate = date.split("T");
                     String datePart = newDate[0];
+                    String newTime = newDate[1];
+                    String[] timePart = newTime.split("\\.");
 
-                    GpInventory gp = new GpInventory(countID, ItemNumber, uom, lotNum, qty, datePart, bin);
+
+
+
+                    GpInventory gp = new GpInventory(countID, ItemNumber, uom, lotNum, qty, datePart+"   "+timePart[0], bin);
                     ItemLotCounts.add(gp);
                 }
             } catch (Exception e) {
@@ -433,7 +447,37 @@ import java.util.ArrayList;
         }
         @Override
         public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.btnSyncGP:
+                    for(int i=0;i<theParentList.size();i++) {
+                        String a = theParentList.get(i).getCounted().toString();
+                        String b = theParentList.get(i).getInventory().toString();
+                        String c = theParentList.get(i).getLotNumber();
+                        String d = ItemInformation.getItemNumber();
+                        String e = ItemInformation.getSUom();
+                        String f = MainActivity.prefs.getString(MainActivity.Domain, "");
+                        String g = MainActivity.prefs.getString(MainActivity.Username, "");
+                        String h = MainActivity.prefs.getString(MainActivity.Password, "");
+                        String j = MainActivity.prefs.getString(MainActivity.Company, "");
+                        String k = MainActivity.prefs.getString(MainActivity.Site, "");
+                        InsertGPVariance(f, g, h, j, k, d, ItemInformation.GetVariance(a,b), c, e);
+                        }
 
+            }
+        }
+
+        protected void removeListItem(View rowView, final int position) {
+            final Animation animation = AnimationUtils.loadAnimation(
+                    getActivity(), android.R.anim.slide_in_left);
+            rowView.startAnimation(animation);
+            Handler handle = new Handler();
+            handle.postDelayed(new Runnable() {
+
+                public void run() {
+                   theParentList.remove(position);
+                    listAdapter.notifyDataSetChanged();
+                }
+            }, 1000);
         }
 
         public void DisplayError(String message){

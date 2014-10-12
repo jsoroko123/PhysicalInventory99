@@ -142,6 +142,14 @@ import java.util.List;
 
     }
 
+    public static String GetVariance(String Counted, String Inventory){
+        String varianceConverted;
+        double variance = Double.valueOf(Counted) - Double.valueOf(Inventory);
+        varianceConverted = String.valueOf(variance);
+        return varianceConverted;
+
+    }
+
 
 
 }

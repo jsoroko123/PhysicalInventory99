@@ -37,7 +37,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
+        if (childPosition == 0)
+            return 0;
+
+        return getChild(groupPosition, childPosition).hashCode();
     }
 
     @Override
@@ -45,10 +48,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                              View view, ViewGroup parent) {
 
         ChildRow child = (ChildRow) getChild(groupPosition, childPosition);
-        if (view == null) {
+
+
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.listrow_details, null);
-        }
+            if (childPosition == 0)
+                view = layoutInflater.inflate(R.layout.listrow_details_with_header, null);
+
+             else
+                view = layoutInflater.inflate(R.layout.listrow_details, null);
+
+
 
 
 
@@ -56,7 +65,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView date = (TextView) view.findViewById(R.id.name);
         TextView count = (TextView) view.findViewById(R.id.population);
-        lot.setText(child.getLotNumber().trim());
+        lot.setText(child.getDateCreated().trim());
         lot.setTag(child.getCountID().trim());
         count.setText(child.getQty().trim());
         date.setText(child.getUOM().trim());

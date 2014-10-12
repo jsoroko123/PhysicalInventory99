@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:id="@+id/et_qty"
-                android:hint="Scan or Enter Lot Quantity"
+                android:hint="Scan or Enter Quantity"
                 android:enabled="false"
                 android:background="@drawable/text3"
                 android:textColor="@color/black"

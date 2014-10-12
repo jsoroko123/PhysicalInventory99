@@ -33,7 +33,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public static MyPageAdapter pageAdapter;
     public static ViewPager pager;
     public static TextView tvItemDesc;
-    public static EditText etItem,etLot, etQty;
+    public static EditText etItem, etLot, etQty;
     public static Spinner spinner;
     public static Button btn1, btn2, btnClear, btnNextCount;
     public static Button btnGo1, btnGo2, btnGo3, btnClearAll;
@@ -44,7 +44,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public static List<Fragment> fragments = new ArrayList<>();
     public static MenuItem m;
     public static SharedPreferences prefs;
-    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String MyPREFERENCES = "MyPrefs";
     public static final String Url = "urlKey";
     public static final String Domain = "domainKey";
     public static final String Username = "userKey";
@@ -152,7 +152,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-     private List<Fragment> getFragments() {
+    private List<Fragment> getFragments() {
 
         fList.add(FirstFragment.newInstance("Fragment 1"));
         fList.add(MainFragment.newInstance("Fragment 2"));
@@ -167,57 +167,56 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (scanningResult != null) {
             String scanContent = scanningResult.getContents();
             if (scanContent != null) {
-                if(scanningResult.getFormatName().equals("QR_CODE") && scanContent.contains("|")){
+                if (scanningResult.getFormatName().equals("QR_CODE") && scanContent.contains("|")) {
                     String[] newContent = scanContent.split("\\|");
                     String itemNumber = newContent[0];
                     String uom = newContent[1];
                     int spinnerPosition = 0;
                     String lotNumber = newContent[2];
-                    boolean hasResults = mf.GetItem(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Company, ""));
-                    if(hasResults) {
+                    boolean hasResults = mf.GetItem(itemNumber, MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
+                    if (hasResults) {
 
                         mf.GetItemUOM(ItemInformation.getUoMSchedule(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
                         DisplayUOMSpinner();
-                            etItem.setText(itemNumber);
+                        etItem.setText(itemNumber);
 
-                            ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
-                            spinnerPosition = myAdap.getPosition(uom);
-                            spinner.setSelection(spinnerPosition);
-                            tvItemDesc.setText(ItemInformation.getItemDescription());
-                            tvItemNumber.setText("Item: " + ItemInformation.getItemNumber());
-                            tvItemDescription.setText(ItemInformation.getItemDescription());
-                            tvStdCost.setText(ItemInformation.getStdCost());
-                            tvCurrCost.setText(ItemInformation.getCurrCost());
-                            tvItemShWt.setText(ItemInformation.getItemShWt());
-                            tvPUom.setText(ItemInformation.getpUom());
-                            tvSUom.setText(ItemInformation.getSUom());
-                            tvUOMSchedule.setText(ItemInformation.getUoMSchedule());
-                            if(ItemInformation.getLotTrackingInd().equals("1")) {
-                                etLot.setText(lotNumber);
-                                etItem.setEnabled(false);
-                                btn1.setEnabled(false);
-                                etLot.setEnabled(false);
-                                btn2.setEnabled(false);
-                                etItem.setBackground(getResources().getDrawable(R.drawable.text2));
-                                etLot.setBackground(getResources().getDrawable(R.drawable.text2));
-                                etQty.setBackground(getResources().getDrawable(R.drawable.text));
-                                etQty.setEnabled(true);
-                                btnGo3.setEnabled(true);
-                                llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
-                                llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
-                            }
-                            else{
-                                MainActivity.etLot.setText(MainActivity.etLot.getText().toString());
-                                MainActivity.etLot.setEnabled(false);
-                                MainActivity.btn2.setEnabled(false);
-                                MainActivity.btnGo3.setEnabled(true);
-                                MainActivity.etQty.setEnabled(true);
-                                MainActivity.etQty.requestFocus();
-                                MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
-                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
-                                MainActivity.etLot.setHint("Lot Tracking N/A");
+                        ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
+                        spinnerPosition = myAdap.getPosition(uom);
+                        spinner.setSelection(spinnerPosition);
+                        tvItemDesc.setText(ItemInformation.getItemDescription());
+                        tvItemNumber.setText("Item: " + ItemInformation.getItemNumber());
+                        tvItemDescription.setText(ItemInformation.getItemDescription());
+                        tvStdCost.setText(ItemInformation.getStdCost());
+                        tvCurrCost.setText(ItemInformation.getCurrCost());
+                        tvItemShWt.setText(ItemInformation.getItemShWt());
+                        tvPUom.setText(ItemInformation.getpUom());
+                        tvSUom.setText(ItemInformation.getSUom());
+                        tvUOMSchedule.setText(ItemInformation.getUoMSchedule());
+                        if (ItemInformation.getLotTrackingInd().equals("1")) {
+                            etLot.setText(lotNumber);
+                            etItem.setEnabled(false);
+                            btn1.setEnabled(false);
+                            etLot.setEnabled(false);
+                            btn2.setEnabled(false);
+                            etItem.setBackground(getResources().getDrawable(R.drawable.text2));
+                            etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                            etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                            etQty.setEnabled(true);
+                            btnGo3.setEnabled(true);
+                            llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
+                            llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
+                        } else {
+                            MainActivity.etLot.setText(MainActivity.etLot.getText().toString());
+                            MainActivity.etLot.setEnabled(false);
+                            MainActivity.btn2.setEnabled(false);
+                            MainActivity.btnGo3.setEnabled(true);
+                            MainActivity.etQty.setEnabled(true);
+                            MainActivity.etQty.requestFocus();
+                            MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                            MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                            MainActivity.etLot.setHint("Lot Tracking N/A");
 
-                            }
+                        }
                         FirstFragment.Counted.clear();
                         FirstFragment.Inventory.clear();
                         FirstFragment.LotNumber.clear();
@@ -227,37 +226,35 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         FirstFragment.ItemLotCounts.clear();
                         f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
                         f.ListGpVsCounted(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
-                        FirstFragment.listAdapter = new ExpandableListAdapter(this,  FirstFragment.theParentList);
+                        FirstFragment.listAdapter = new ExpandableListAdapter(this, FirstFragment.theParentList);
                         FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                         FirstFragment.myList.invalidateViews();
 
-                        if(spinnerPosition==-1) {
+                        if (spinnerPosition == -1) {
                             Toast toast = Toast.makeText(this, "Invalid UOM. Please Select From List.", Toast.LENGTH_SHORT);
                             LinearLayout toastLayout = (LinearLayout) toast.getView();
                             TextView toastTV = (TextView) toastLayout.getChildAt(0);
                             toastTV.setTextSize(18);
-                            toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                             toastTV.setTextColor(getResources().getColor(R.color.red));
                             toast.show();
 
                         }
 
-                     }
-                    else {
+                    } else {
                         Toast toast = Toast.makeText(this, "Invalid Item Number", Toast.LENGTH_SHORT);
                         LinearLayout toastLayout = (LinearLayout) toast.getView();
                         TextView toastTV = (TextView) toastLayout.getChildAt(0);
                         toastTV.setTextSize(18);
-                        toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toastTV.setTextColor(getResources().getColor(R.color.red));
                         toast.show();
                     }
 
-                }
-                else {
+                } else {
                     if (etItem.isEnabled()) {
-                        boolean hasResults = mf.GetItem(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""),MainActivity.prefs.getString(MainActivity.Company, ""));
-                        if(hasResults) {
+                        boolean hasResults = mf.GetItem(scanContent.toString(), MainActivity.prefs.getString(MainActivity.Domain, ""), MainActivity.prefs.getString(MainActivity.Username, ""), MainActivity.prefs.getString(MainActivity.Password, ""), MainActivity.prefs.getString(MainActivity.Company, ""));
+                        if (hasResults) {
                             //pager.setOnTouchListener(null);
                             pager.setCurrentItem(1);
                             etItem.setText(scanContent);
@@ -287,31 +284,31 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             FirstFragment.childList.clear();
                             FirstFragment.ItemLotCounts.clear();
                             f.GetItemCounts(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
-                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(),MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
-                            FirstFragment.listAdapter = new ExpandableListAdapter(this,  FirstFragment.theParentList);
+                            f.ListGpVsCounted(MainActivity.etItem.getText().toString(), MainActivity.prefs.getString(MainActivity.Company, ""), MainActivity.prefs.getString(MainActivity.Site, ""));
+                            FirstFragment.listAdapter = new ExpandableListAdapter(this, FirstFragment.theParentList);
                             FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                             FirstFragment.myList.invalidateViews();
-                        }else{
+                        } else {
                             Toast toast = Toast.makeText(this, "Invalid Item Number", Toast.LENGTH_SHORT);
                             LinearLayout toastLayout = (LinearLayout) toast.getView();
                             TextView toastTV = (TextView) toastLayout.getChildAt(0);
                             toastTV.setTextSize(18);
-                            toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                             toastTV.setTextColor(getResources().getColor(R.color.red));
                             toast.show();
                         }
-                    }else if (etLot.isEnabled()) {
-                            pager.setCurrentItem(1);
-                            etLot.setText(scanContent);
-                            etLot.setEnabled(false);
-                            btn2.setEnabled(false);
-                            etLot.setBackground(getResources().getDrawable(R.drawable.text2));
-                            etQty.setEnabled(true);
-                            etQty.setBackground(getResources().getDrawable(R.drawable.text));
-                            btnGo3.setEnabled(true);
+                    } else if (etLot.isEnabled()) {
+                        pager.setCurrentItem(1);
+                        etLot.setText(scanContent);
+                        etLot.setEnabled(false);
+                        btn2.setEnabled(false);
+                        etLot.setBackground(getResources().getDrawable(R.drawable.text2));
+                        etQty.setEnabled(true);
+                        etQty.setBackground(getResources().getDrawable(R.drawable.text));
+                        btnGo3.setEnabled(true);
 
 
-                    } else if (etQty.isEnabled()){
+                    } else if (etQty.isEnabled()) {
                         pager.setCurrentItem(1);
                         etQty.setText(scanContent);
                         etQty.setEnabled(false);
@@ -323,7 +320,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         btnNextCount.setEnabled(true);
                     }
                 }
-                }
+            }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(),
                     "No scan data received!", Toast.LENGTH_SHORT);
@@ -350,8 +347,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void DisplayUOMSpinner() {
-    /*    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, ItemInformation.getItemUOMList());
+        ArrayList<String> u = new ArrayList<>();
+        for (int a = 0; a < ItemInformation.getItemUOMList().size(); a++) {
+            u.add(ItemInformation.getItemUOMList().get(a).first.toString());
+
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, u);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         MainActivity.spinner.setAdapter(adapter);
         MainActivity.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -364,12 +366,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });*/
+        });
+
 
     }
-
-
-
 }
 
 
