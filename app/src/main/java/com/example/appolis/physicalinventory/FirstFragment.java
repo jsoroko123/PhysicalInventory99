@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
@@ -415,7 +418,7 @@ import java.util.ArrayList;
 
             } catch (Exception e) {
                 e.printStackTrace();
-
+                DisplayError(e.getMessage());
 
             }
 
@@ -461,24 +464,25 @@ import java.util.ArrayList;
                         String j = MainActivity.prefs.getString(MainActivity.Company, "");
                         String k = MainActivity.prefs.getString(MainActivity.Site, "");
                         InsertGPVariance(f, g, h, j, k, d, ItemInformation.GetVariance(a,b), c, e);
-                        }
 
+                        }
+                    CustomToast("GP Synchronization Successful.",R.color.encode_view);
             }
         }
 
-        protected void removeListItem(View rowView, final int position) {
-            final Animation animation = AnimationUtils.loadAnimation(
-                    getActivity(), android.R.anim.slide_in_left);
-            rowView.startAnimation(animation);
-            Handler handle = new Handler();
-            handle.postDelayed(new Runnable() {
 
-                public void run() {
-                   theParentList.remove(position);
-                    listAdapter.notifyDataSetChanged();
-                }
-            }, 1000);
+        public void CustomToast(String message, int color){
+            Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_LONG);
+            LinearLayout toastLayout = (LinearLayout) toast.getView();
+            TextView toastTV = (TextView) toastLayout.getChildAt(0);
+            toastTV.setTextSize(18);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toastTV.setTextColor(getResources().getColor(color));
+            toast.show();
         }
+
+
+
 
         public void DisplayError(String message){
             AlertDialog alertDialog1 = new AlertDialog.Builder(

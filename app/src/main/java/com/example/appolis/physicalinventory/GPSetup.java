@@ -245,8 +245,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
                     }
                     isPushed = false;
                     company = adapterView.getItemAtPosition(i).toString();
-                    SharedPreferences.Editor ed = MainActivity.prefs.edit();
-                    ed.putString(MainActivity.Company,adapterView.getItemAtPosition(i).toString());
 
                 }
 
@@ -261,8 +259,6 @@ public class GPSetup extends ActionBarActivity implements View.OnClickListener {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 site = adapterView.getItemAtPosition(i).toString();
-                SharedPreferences.Editor ed = MainActivity.prefs.edit();
-                ed.putString(MainActivity.Site,adapterView.getItemAtPosition(i).toString());
             }
 
             @Override

@@ -30,7 +30,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 public  class MainFragment extends Fragment implements View.OnClickListener {
@@ -172,10 +172,8 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             MainActivity.etLot.setBackground(getResources().getDrawable(R.drawable.text2));
                             MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text));
                         } else {
-                            CustomToast("Please Enter or Scan the lot Number", R.color.red);
+                            CustomToast("Please Enter or Scan the Lot Number", R.color.red);
                         }
-
-
                         break;
                     case R.id.btnGo3:
                         if (!MainActivity.etQty.getText().toString().isEmpty()) {
@@ -244,8 +242,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                                 MainActivity.llSection1.setBackground(getResources().getDrawable(R.drawable.gray_button2));
                                 MainActivity.etLot.setText("");
                                 MainActivity.etQty.setText("");
-
-
+                                MainActivity.etQty.setBackground(getResources().getDrawable(R.drawable.text3));
                             }
                             else{
 
@@ -262,7 +259,6 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             }
 
                             MainActivity.llSection2.setBackground(getResources().getDrawable(R.drawable.blue_button));
-
                             MainActivity.m.setEnabled(true);
                             MainActivity.m.setIcon(getResources().getDrawable(R.drawable.barcode_icon));
                             MainActivity.etLot.requestFocus();
@@ -343,10 +339,7 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
                             FirstFragment.listAdapter = new ExpandableListAdapter(getActivity(), FirstFragment.theParentList);
                             FirstFragment.myList.setAdapter(FirstFragment.listAdapter);
                             FirstFragment.myList.invalidateViews();
-
-
-
-                        }
+                    }
                         break;
                     case R.id.button12:
                         if (!MainActivity.etItem.getText().toString().isEmpty()) {
@@ -559,6 +552,12 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
         request.addProperty(CasePI);
 
         CasePI = new PropertyInfo();
+        CasePI.setName("Baseuom");
+        CasePI.setValue(uom);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
         CasePI.setName("LotNumber");
         CasePI.setValue(lotNumber);
         CasePI.setType(String.class);
@@ -566,6 +565,12 @@ public  class MainFragment extends Fragment implements View.OnClickListener {
 
         CasePI = new PropertyInfo();
         CasePI.setName("Qty");
+        CasePI.setValue(qty);
+        CasePI.setType(String.class);
+        request.addProperty(CasePI);
+
+        CasePI = new PropertyInfo();
+        CasePI.setName("BaseQty");
         CasePI.setValue(qty);
         CasePI.setType(String.class);
         request.addProperty(CasePI);
