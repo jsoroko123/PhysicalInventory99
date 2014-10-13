@@ -3,10 +3,14 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,15 +103,34 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isLastChild, View view,
+    public View getGroupView(final int groupPosition, boolean isLastChild, View view,
                              ViewGroup parent) {
 
-        ParentRow parentRow = (ParentRow) getGroup(groupPosition);
+        final ParentRow parentRow = (ParentRow) getGroup(groupPosition);
         if (view == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(R.layout.listrow_group, null);
         }
 
+        final CheckBox checkbox = (CheckBox) view.findViewById(R.id.chkBox);
+        if(parentRow.isChecked()) //the child was enable (checked)
+        {
+            checkbox.setChecked(true);
+
+        }
+        else //the child was disable (non-checked)
+        {
+            checkbox.setChecked(false);
+        }
+
+        checkbox.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                 // TODO Auto-generated method stub
+              parentList.get(groupPosition).setChecked(checkbox.isChecked());
+            }
+        });
         TextView lot = (TextView) view.findViewById(R.id.tv_lotnumber);
         lot.setText(parentRow.getLotNumber().trim());
         TextView inv = (TextView) view.findViewById(R.id.tv_inventory);

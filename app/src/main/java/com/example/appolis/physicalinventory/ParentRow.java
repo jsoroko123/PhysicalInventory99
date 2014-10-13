@@ -7,17 +7,33 @@ public class ParentRow {
     private String lotNumber;
     private String inventory;
     private String counted;
+    public boolean isChecked;
+
+    public  boolean isChecked() {
+        return isChecked;
+    }
+
+    public  void setChecked(boolean isChecked2) {
+        isChecked = isChecked2;
+    }
+
     private ArrayList<ChildRow> children = new ArrayList<ChildRow>();
 
-    public ParentRow(String lot, String inv, String count, ArrayList<ChildRow> childList) {
+    public ParentRow(String lot, String inv, String count, boolean checked, ArrayList<ChildRow> childList) {
         super();
         this.lotNumber = lot;
         this.inventory = inv;
         this.counted = count;
+        this.isChecked = checked;
         this.children = childList;
 
     }
 
+    public ParentRow() {
+        super();
+
+
+    }
     public String getInventory() {
         return inventory;
     }

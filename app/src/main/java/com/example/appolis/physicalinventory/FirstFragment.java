@@ -2,9 +2,11 @@ package com.example.appolis.physicalinventory;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -54,7 +58,7 @@ import java.util.ArrayList;
         public static ArrayList<ParentRow> theParentList = new ArrayList<>();
         public static ArrayList<GpInventory> ItemLotCounts = new ArrayList<>();
         public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-
+        public static CheckBox ch;
         public static FirstFragment newInstance(String message) {
             FirstFragment f = new FirstFragment();
             Bundle bdl = new Bundle(1);
@@ -79,6 +83,7 @@ import java.util.ArrayList;
             MainActivity.htvSite.setText(MainActivity.prefs.getString(MainActivity.Site, ""));
             listAdapter = new ExpandableListAdapter(getActivity(), theParentList);
             myList.setAdapter(listAdapter);
+            myList.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
             myList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
                 int previousGroup = -1;
 
@@ -237,7 +242,7 @@ import java.util.ArrayList;
                          }
 
 
-                         ParentRow p = new ParentRow(parentlotNum, parentinvent, parentassign, childList);
+                         ParentRow p = new ParentRow(parentlotNum, parentinvent, parentassign, true, childList);
                          theParentList.add(p);
                      }
                  } catch (Exception e) {
@@ -292,10 +297,6 @@ import java.util.ArrayList;
                     String datePart = newDate[0];
                     String newTime = newDate[1];
                     String[] timePart = newTime.split("\\.");
-
-
-
-
                     GpInventory gp = new GpInventory(countID, ItemNumber, uom, lotNum, qty, datePart+"   "+timePart[0], bin);
                     ItemLotCounts.add(gp);
                 }
@@ -425,6 +426,9 @@ import java.util.ArrayList;
         }
 
 
+
+
+
         public void DeleteItemCount(int countID){
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME4);
             PropertyInfo CasePI = new PropertyInfo();
@@ -452,10 +456,12 @@ import java.util.ArrayList;
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btnSyncGP:
+
                     for(int i=0;i<theParentList.size();i++) {
                         String a = theParentList.get(i).getCounted().toString();
                         String b = theParentList.get(i).getInventory().toString();
                         String c = theParentList.get(i).getLotNumber();
+                        boolean r = theParentList.get(i).isChecked();
                         String d = ItemInformation.getItemNumber();
                         String e = ItemInformation.getSUom();
                         String f = MainActivity.prefs.getString(MainActivity.Domain, "");
@@ -463,11 +469,20 @@ import java.util.ArrayList;
                         String h = MainActivity.prefs.getString(MainActivity.Password, "");
                         String j = MainActivity.prefs.getString(MainActivity.Company, "");
                         String k = MainActivity.prefs.getString(MainActivity.Site, "");
-                        InsertGPVariance(f, g, h, j, k, d, ItemInformation.GetVariance(a,b), c, e);
+
+                        //InsertGPVariance(f, g, h, j, k, d, ItemInformation.GetVariance(a,b), c, e);
+                        if(r) {
+                            MainActivity.SoapAccessTask sat = new MainActivity.SoapAccessTask(getActivity());
+                            sat.execute(new String[]{f, g, h, j, k, d, ItemInformation.GetVariance(a,b), c, e});
+                        }
+
 
                         }
-                    CustomToast("GP Synchronization Successful.",R.color.encode_view);
+
+
             }
+
+
         }
 
 
@@ -500,3 +515,6 @@ import java.util.ArrayList;
             alertDialog1.show();
         }
     }
+
+
+

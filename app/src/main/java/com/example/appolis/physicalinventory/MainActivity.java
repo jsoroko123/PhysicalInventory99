@@ -4,8 +4,11 @@ import com.google.xzing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -26,6 +29,13 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
@@ -370,6 +380,109 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     }
+
+
+     public static class SoapAccessTask extends AsyncTask<String, Void, String> {
+         private ProgressDialog dialog;
+
+         public SoapAccessTask(Context context) {
+             dialog = new ProgressDialog(context);
+         }
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Syncing with GP....");
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String NAMESPACE = "http://tempuri.org/";
+            String SOAP_ACTION5 = "http://tempuri.org/InsertGPVariance";
+            String METHOD_NAME5 = "InsertGPVariance";
+            String webResponse = "";
+            try {
+                SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME5);
+                PropertyInfo CasePI = new PropertyInfo();
+                CasePI.setName("Domain");
+                CasePI.setValue(urls[0]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("UserName");
+                CasePI.setValue(urls[1]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("Password");
+                CasePI.setValue(urls[2]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("company");
+                CasePI.setValue(urls[3]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("sWarehouseName");
+                CasePI.setValue(urls[4]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("sItemNumber");
+                CasePI.setValue(urls[5]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("dQty");
+                CasePI.setValue(urls[6]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("sLotNumber");
+                CasePI.setValue(urls[7]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                CasePI = new PropertyInfo();
+                CasePI.setName("sSellingUOM");
+                CasePI.setValue(urls[8]);
+                CasePI.setType(String.class);
+                request.addProperty(CasePI);
+
+                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                        SoapEnvelope.VER11);
+                envelope.dotNet = true;
+                envelope.setOutputSoapObject(request);
+                HttpTransportSE androidHttpTransport = new HttpTransportSE(MainActivity.prefs.getString(MainActivity.Url, ""));
+
+
+                request.addProperty(CasePI);
+
+                androidHttpTransport.call(SOAP_ACTION5, envelope);
+                SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+                webResponse = response.toString();
+            } catch (Exception e) {
+
+            }
+            return webResponse;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+
+        }
+    }
+
 }
 
 
